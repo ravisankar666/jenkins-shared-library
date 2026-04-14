@@ -1,5 +1,5 @@
 // call is the default function name
-def call () {
+def call (Map configMap) {
     pipeline {
     //this are pre-build section
     agent {
@@ -11,8 +11,8 @@ def call () {
         COURSE = "Jenkins"
         appVersion = ""
         ACC_ID = "517542309828"
-        PROJECT = "roboshop"
-        COMPONENT = "catalogue"
+        PROJECT = configMap.get("project")
+        COMPONENT = configMap.get("component")
     }
     options {
         timeout(time: 10, unit: 'MINUTES') 
@@ -148,7 +148,21 @@ def call () {
                     """
                 }
             }
-        } */
+        } */ 
+        
+            stage('Trigger DEV Deploy'){
+                steps {
+                    script {
+                        build job: "../${COMPONENT}-deploy",
+                            wait: false, // Wait for completion
+                            propagate: false // Propagate status
+                            parameters: [
+                                string(name: 'appVersion' , value: "${appVersion}"),
+                                string(name: 'deploy_to' , value: "dev")
+                            ]
+                    }
+                }
+            }
     }
     post{
         always{
