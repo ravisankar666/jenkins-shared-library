@@ -1,5 +1,5 @@
 // call is the default function name
-def call (Map configMap) {
+def call(Map configMap) {
     pipeline {
     //this are pre-build section
     agent {
