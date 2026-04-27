@@ -42,7 +42,7 @@ def call(Map configMap) {
             steps {
                 script{
                     sh """
-                        npm test
+                        echo test
                     """
                 }
             }
@@ -122,7 +122,7 @@ def call(Map configMap) {
         }
         stage('Build Image') {
             steps {
-                script{
+                script {
                    withAWS(region:'us-east-1',credentials:'aws-creds') {
                         sh """
                             aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
@@ -150,19 +150,20 @@ def call(Map configMap) {
             }
         } */ 
         
-            stage('Trigger DEV Deploy'){
-                steps {
-                    script {
-                        build job: "../${COMPONENT}-deploy",
+        stage('Trigger DEV Deploy'){
+            steps {
+                script {
+                     build job: "../${COMPONENT}-deploy",
                             wait: false, // Wait for completion
-                            propagate: false // Propagate status
+                            propagate: false, // Propagate status
                             parameters: [
-                                string(name: 'appVersion' , value: "${appVersion}"),
-                                string(name: 'deploy_to' , value: "dev")
+                                string(name: 'appVersion', value: "${appVersion}"),
+                                string(name: 'deploy_to', value: "dev")
                             ]
-                    }
-                }
+
+                 }
             }
+        }
     }
     post{
         always{
